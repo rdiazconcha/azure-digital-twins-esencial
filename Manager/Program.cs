@@ -15,7 +15,24 @@ namespace Manager
             var httpClient = GetHttpClient(token);
 
             var spaceId = await Spaces.GetOrCreateSpaceAsync("Habitación", "Room", httpClient);
+            var resourceId = await Resources.GetOrCreateResourceAsync(spaceId, "IotHub", httpClient);
+
+            bool isProvisioning = true;
+            while (isProvisioning)
+            {
+                var resource = await Resources.GetResourceAsync(resourceId, httpClient);
+                if (resource.Status.ToLower() == "provisioning")
+                {
+                    await Task.Delay(2000);
+                }
+                else
+                {
+                    isProvisioning = false;
+                }
+            }
+
             Console.WriteLine(spaceId);
+            Console.WriteLine(resourceId);
         }
 
         private static HttpClient GetHttpClient(string token)
