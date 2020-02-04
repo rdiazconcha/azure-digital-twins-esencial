@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
+﻿using Manager.Api;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System;
 using System.IO;
 using System.Net.Http;
@@ -12,6 +13,9 @@ namespace Manager
         {
             var token = await GetNewOrExistingTokenAsync();
             var httpClient = GetHttpClient(token);
+
+            var spaceId = await Spaces.GetOrCreateSpaceAsync("Habitación", "Room", httpClient);
+            Console.WriteLine(spaceId);
         }
 
         private static HttpClient GetHttpClient(string token)
