@@ -36,12 +36,15 @@ namespace Manager
             var device = await Devices.GetDeviceAsync(deviceId, httpClient);
             var sensorId = await Sensors.GetOrCreateSensorAsync("Temperatura", "TEMP123", deviceId,
                 httpClient);
+            var matcherId = await Matchers.GetOrCreateMatcherAsync("Matcher 1", spaceId, "Temperatura",
+                httpClient);
 
             Console.WriteLine($"SpaceId {spaceId}");
             Console.WriteLine($"ResourceId {resourceId}");
             Console.WriteLine($"DeviceId {deviceId}");
             Console.WriteLine($"ConnectionString {device.ConnectionString}");
             Console.WriteLine($"SensorId {sensorId}");
+            Console.WriteLine($"MatcherId {matcherId}");
         }
 
         private static HttpClient GetHttpClient(string token)
