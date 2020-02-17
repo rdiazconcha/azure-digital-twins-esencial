@@ -34,11 +34,14 @@ namespace Manager
             var deviceId = await Devices.GetOrCreateDeviceAsync("Dispositivo 1", "ABC123", 
                 spaceId, httpClient);
             var device = await Devices.GetDeviceAsync(deviceId, httpClient);
+            var sensorId = await Sensors.GetOrCreateSensorAsync("Temperatura", "TEMP123", deviceId,
+                httpClient);
 
             Console.WriteLine($"SpaceId {spaceId}");
             Console.WriteLine($"ResourceId {resourceId}");
             Console.WriteLine($"DeviceId {deviceId}");
             Console.WriteLine($"ConnectionString {device.ConnectionString}");
+            Console.WriteLine($"SensorId {sensorId}");
         }
 
         private static HttpClient GetHttpClient(string token)
