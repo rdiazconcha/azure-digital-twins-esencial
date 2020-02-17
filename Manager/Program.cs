@@ -31,8 +31,14 @@ namespace Manager
                 }
             }
 
-            Console.WriteLine(spaceId);
-            Console.WriteLine(resourceId);
+            var deviceId = await Devices.GetOrCreateDeviceAsync("Dispositivo 1", "ABC123", 
+                spaceId, httpClient);
+            var device = await Devices.GetDeviceAsync(deviceId, httpClient);
+
+            Console.WriteLine($"SpaceId {spaceId}");
+            Console.WriteLine($"ResourceId {resourceId}");
+            Console.WriteLine($"DeviceId {deviceId}");
+            Console.WriteLine($"ConnectionString {device.ConnectionString}");
         }
 
         private static HttpClient GetHttpClient(string token)
