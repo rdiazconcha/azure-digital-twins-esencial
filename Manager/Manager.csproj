@@ -9,4 +9,10 @@
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.2.6" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Js\Udf.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

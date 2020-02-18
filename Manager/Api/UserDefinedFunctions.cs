@@ -1,6 +1,7 @@
 ﻿using Manager.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Mime;
 using System.Text;
@@ -11,6 +12,20 @@ namespace Manager.Api
 {
     class UserDefinedFunctions
     {
+        public static async Task<Guid> GetOrCreateUserDefinedFunctionAsync(string name,
+            Guid spaceId, Guid[] matchers, string script, HttpClient httpClient)
+        {
+            var udfs = await SearchUserDefinedFunctionAsync(name, httpClient);
+            if (udfs.Any())
+            {
+                return udfs.First().Id;
+            }
+            var newId = await CreateUserDefinedFunctionAsync(name, spaceId, matchers,
+                script, httpClient);
+            return newId;
+        }
+
+
         public static async Task<IEnumerable<UserDefinedFunctionQuery>> 
             SearchUserDefinedFunctionAsync(string name, HttpClient httpClient)
         {

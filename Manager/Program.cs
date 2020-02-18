@@ -34,10 +34,17 @@ namespace Manager
             var deviceId = await Devices.GetOrCreateDeviceAsync("Dispositivo 1", "ABC123", 
                 spaceId, httpClient);
             var device = await Devices.GetDeviceAsync(deviceId, httpClient);
-            var sensorId = await Sensors.GetOrCreateSensorAsync("Temperatura", "TEMP123", deviceId,
+            var sensorId = await Sensors.GetOrCreateSensorAsync("Temperature", "TEMP2000", deviceId,
                 httpClient);
-            var matcherId = await Matchers.GetOrCreateMatcherAsync("Matcher 1", spaceId, "Temperatura",
+            var matcherId = await Matchers.GetOrCreateMatcherAsync("Matcher 1", spaceId, "Temperature",
                 httpClient);
+            var script = new StreamReader(@"js\udf.js").ReadToEnd();
+            var udfId = await UserDefinedFunctions.GetOrCreateUserDefinedFunctionAsync("Temperature-Udf-1",
+                spaceId, new[] { matcherId },
+                script,
+                httpClient);
+            var roleAssignmentId = await RoleAssignments.CreateRoleAssignmentAsync(udfId,
+                spaceId, httpClient);
 
             Console.WriteLine($"SpaceId {spaceId}");
             Console.WriteLine($"ResourceId {resourceId}");
@@ -45,6 +52,8 @@ namespace Manager
             Console.WriteLine($"ConnectionString {device.ConnectionString}");
             Console.WriteLine($"SensorId {sensorId}");
             Console.WriteLine($"MatcherId {matcherId}");
+            Console.WriteLine($"UdfId {udfId}");
+            Console.WriteLine($"RoleAssignmentId {roleAssignmentId}");
         }
 
         private static HttpClient GetHttpClient(string token)
