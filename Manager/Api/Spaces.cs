@@ -12,7 +12,20 @@ namespace Manager.Api
 {
     class Spaces
     {
-
+        public static async Task<IEnumerable<SpaceQuery>> GetAllSpacesAsync(HttpClient httpClient, 
+            bool includeValues = false)
+        {
+            var uri = includeValues ? $"spaces?includes=values" : "spaces";
+            var response = await httpClient.GetAsync(uri);
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var spaces = JsonSerializer.Deserialize<IEnumerable<SpaceQuery>>(content, 
+                    new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                return spaces;
+            }
+            return null;
+        }
         public static async Task<Guid> GetOrCreateSpaceAsync(string name, string type, HttpClient httpClient)
         {
             var spaces = await SearchSpaceAsync(name, httpClient);

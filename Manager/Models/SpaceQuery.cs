@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Manager.Models
 {
@@ -6,5 +7,7 @@ namespace Manager.Models
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+
+        public IEnumerable<SpaceValueQuery> Values { get; set; }
     }
 }

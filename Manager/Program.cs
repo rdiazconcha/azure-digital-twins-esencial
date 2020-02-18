@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -14,6 +15,51 @@ namespace Manager
             var token = await GetNewOrExistingTokenAsync();
             var httpClient = GetHttpClient(token);
 
+            if (args == null || args.Length == 0)
+            {
+                Console.WriteLine("Especifique [Aprovisionar] o [Monitorear]");
+                return;
+            }
+
+            if (args?[0].ToLower() == "aprovisionar")
+            {
+                await ProvisionAsync(httpClient);
+            }
+            else
+            {
+                await MonitorAsync(httpClient);
+            }
+        }
+
+        private static async Task MonitorAsync(HttpClient httpClient)
+        {
+            for (int i = 0; i < 60; i++)
+            {
+                var spaces = await Spaces.GetAllSpacesAsync(httpClient);
+                var spacesData = spaces.Where(s => s.Values != null && 
+                s.Values.Any(v => v.Type == "condicion"));
+                if (spacesData.Any())
+                {
+                    foreach (var item in spacesData)
+                    {
+                        foreach (var value in item.Values)
+                        {
+                            Console.WriteLine($"Timestamp: {value.Timestamp}\nValue: {value.Value}\n");
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No es posible encontrar habitaciones");
+                }
+
+                await Task.Delay(2000);
+            }
+        }
+            
+
+        private static async Task ProvisionAsync(HttpClient httpClient)
+        {
             var spaceId = await Spaces.GetOrCreateSpaceAsync("Habitación", "Room", httpClient);
             var resourceId = await Resources.GetOrCreateResourceAsync(spaceId, "IotHub", httpClient);
 
@@ -31,7 +77,7 @@ namespace Manager
                 }
             }
 
-            var deviceId = await Devices.GetOrCreateDeviceAsync("Dispositivo 1", "ABC123", 
+            var deviceId = await Devices.GetOrCreateDeviceAsync("Dispositivo 1", "ABC123",
                 spaceId, httpClient);
             var device = await Devices.GetDeviceAsync(deviceId, httpClient);
             var sensorId = await Sensors.GetOrCreateSensorAsync("Temperature", "TEMP2000", deviceId,
