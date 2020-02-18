@@ -35,7 +35,7 @@ namespace Manager
         {
             for (int i = 0; i < 60; i++)
             {
-                var spaces = await Spaces.GetAllSpacesAsync(httpClient);
+                var spaces = await Spaces.GetAllSpacesAsync(httpClient, true);
                 var spacesData = spaces.Where(s => s.Values != null && 
                 s.Values.Any(v => v.Type == "condicion"));
                 if (spacesData.Any())
